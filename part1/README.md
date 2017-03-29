@@ -7,7 +7,7 @@ Build instructions for Linux
 
 Dependencies
 ------------
-gcc/g++, CMake 2.6 (or higher), make, OpenGL
+gcc/g++, CMake 2.8 (or higher), make, OpenGL
 
 These dependencies can be installed via the package manager of your
 Linux distribution.
@@ -58,8 +58,8 @@ Build instructions for Windows
 
 Dependencies
 ------------
-Visual Studio 2013 or higher, CMake GUI 2.8 or higher (CMake 3.1 is
-required for Visual Studio 2015)
+Visual Studio 2013 or higher, CMake GUI 2.8 or higher (Visual Studio 2015
+requires CMake 3.1, whereas Visual Studio 2017 requires CMake 3.7)
 
 Environment variables
 ---------------------
