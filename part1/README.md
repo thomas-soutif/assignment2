@@ -12,11 +12,11 @@ gcc/g++, CMake 2.8 (or higher), make, OpenGL
 These dependencies can be installed via the package manager of your
 Linux distribution.
 
-CMake might complain if the additional libraries Xcursor, Xrandr, Xi,
-and Xmu, are not installed. On, e.g., Ubuntu 14.04, you can install
-these libraries with the command
+CMake might complain if the additional libraries Xcursor, Xrandr, Xi, Xmu, and
+Xinerama are not installed. On, e.g., Ubuntu 14.04, you can install these
+libraries with the command
 
-  sudo apt-get install libxmu-dev libxi-dev libxrandr-dev libxcursor-dev
+  sudo apt-get install libxmu-dev libxi-dev libxrandr-dev libxcursor-dev libxinerama-dev
 
 GLEW and GLFW will be built on-the-fly when you build the assignment
 program.
