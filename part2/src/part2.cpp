@@ -147,7 +147,7 @@ void init(Context &ctx)
     ctx.program = loadShaderProgram(shaderDir() + "mesh.vert",
                                     shaderDir() + "mesh.frag");
 
-    loadMesh((modelDir() + "armadillo.obj"), &ctx.mesh);
+    loadMesh((modelDir() + "teapot.obj"), &ctx.mesh);
     createMeshVAO(ctx, ctx.mesh, &ctx.meshVAO);
 
     initializeTrackball(ctx);
@@ -157,17 +157,31 @@ void init(Context &ctx)
 void drawMesh(Context &ctx, GLuint program, const MeshVAO &meshVAO)
 {
     glUseProgram(program);
-
+    glm::mat4 trans;
+    double elapsed_time = glfwGetTime();
+    glm::mat4 keyPosition = trackballGetRotationMatrix(ctx.trackball);
+   
+    glm::vec3 axis(1.0f, 1.0f, 0.0f);
+    trans =  glm::rotate(keyPosition,45.0f, axis);
     // Define the model, view, and projection matrices here
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 projection = glm::mat4(1.0f);
+    glm::mat4 model =  trans *glm::mat4(1.0f);
+    glm::mat4 view = glm::lookAt(
+        glm::vec3(0, 0, 6), // Camera is at (4,3,3), in World Space
+        glm::vec3(0, 0, 0), // and looks at the origin
+        glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+        );
+    
+    glm::mat4 projection =  glm::perspective(glm::radians(20.0f), (float)10 / (float)5, 0.1f, 150.0f);
 
     // Concatenate the model, view, and projection matrices to a
     // ModelViewProjection (MVP) matrix and pass it as a uniform
     // variable to the shader program
 
-
+    glm::mat4 mvp = projection  * view  * model;
+   
+    glUniformMatrix4fv(glGetUniformLocation(ctx.program, "u_mvp"), 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(ctx.program, "u_mv"), 1, GL_FALSE, &mvp[0][0]);
+    glUniform3f(glGetUniformLocation(ctx.program, "u_light_position"), 1.0f, cos(elapsed_time) * 10, cos(elapsed_time) * 20);
     glBindVertexArray(meshVAO.vao);
     glDrawElements(GL_TRIANGLES, meshVAO.numIndices, GL_UNSIGNED_INT, 0);
     glBindVertexArray(ctx.defaultVAO);

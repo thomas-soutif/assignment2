@@ -76,16 +76,53 @@ void createCube(Context &ctx)
          0.5f, -0.5f,  0.5f,
          0.5f,  0.5f,  0.5f, // first triangle ends here
 
+        -0.5f, 0.5f, 0.5f,
+        -0.5f, -0.5f, 0.5f,
+         0.5f, 0.5f, 0.5f,
         // back face
+        -0.5f, -0.5f,  -0.5f, // first triangle starts here
+         0.5f, -0.5f,  -0.5f,
+         0.5f,  0.5f,  -0.5f, // first triangle ends here
+
+        -0.5f, 0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+         0.5f, 0.5f, -0.5f,
 
         // left face
+        -0.5f, 0.5f,  -0.5f,
+        -0.5f, -0.5f, -0.5f,
+         -0.5f, 0.5f,  0.5f,
+
+        -0.5f, 0.5f,  0.5f, // first triangle starts here
+         -0.5f, -0.5f,  0.5f,
+         -0.5f,  -0.5f,  -0.5f,
 
         // right face
+        0.5f,0.5f,0.5f,
+        0.5f,-0.5f,0.5f,
+        0.5f,0.5f,-0.5f,
 
+        0.5f,0.5f,-0.5f,
+        0.5f,-0.5f,-0.5f,
+        0.5f,-0.5f,0.5f,
         // top face
+       -0.5f,0.5f,-0.5f,
+       -0.5f,0.5f,0.5f,
+       0.5f,0.5f,-0.5f,
+
+       -0.5f,0.5f,0.5f,
+       0.5f,0.5f,0.5f,
+       0.5f,0.5f,-0.5f,
+
 
         // bottom face
+        -0.5f,-0.5f,-0.5f,
+        0.5f,-0.5f,-0.5f,
+        0.5f,-0.5f,0.5f,
 
+         -0.5f,-0.5f,-0.5f,
+         -0.5f,-0.5f,0.5f,
+          0.5f,-0.5f,0.5f,
     };
 
     // Generates and populates a vertex buffer object (VBO) for the
@@ -120,9 +157,21 @@ void drawCube(Context &ctx)
     double elapsed_time = glfwGetTime();
 
     // Define the model, view, and projection matrices here
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 projection = glm::mat4(1.0f);
+   
+    glm::mat4 trans;
+    glm::vec3 axis(0.0f, 0.0f, 0.5f);
+    trans = glm::translate(trans, glm::vec3(cos(elapsed_time)*3, 0.0f, sin(elapsed_time) * 3));
+    //glm::rotate(trans, 90.0f, glm::vec3(0.5f, -0.5f, -0.5f))
+    //glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 model = glm::rotate(glm::mat4(1.0f),(float)-elapsed_time,axis) * trans * glm::mat4(1.0f);
+    glm::mat4 view = glm::lookAt(
+        glm::vec3(3, 2, 2), // Camera is at (4,3,3), in World Space
+        glm::vec3(0, 0, 0), // and looks at the origin
+        glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+        );
+    glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)10 / (float)10, 0.1f, 100.0f);
+    /*glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 projection = glm::mat4(1.0f);*/
 
     // Concatenate the model, view, and projection matrices to a
     // ModelViewProjection (MVP) matrix and pass it as a uniform
@@ -132,9 +181,10 @@ void drawCube(Context &ctx)
     // glUniformMatrix4fv(glGetUniformLocation(program, "u_mvp"),
     //                    1, GL_FALSE, &mvp[0][0]);
 
-
+    glm::mat4 mvp = projection * view * model;
+    glUniformMatrix4fv(glGetUniformLocation(ctx.program, "u_mvp"), 1, GL_FALSE, &mvp[0][0]);
     glBindVertexArray(ctx.cubeVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(ctx.defaultVAO);
 
     glUseProgram(0);
